@@ -8,6 +8,8 @@ library(tidyverse)
 library(units)
 library(rgeos)
 library(dplyr)
+library(pander)
+library(knitr)
 setwd("/Users/clair/OneDrive/Documents/Senior Year/RScripts/FinalProject")
 LynxExcel <- read.csv("Coyote Valley Bobcat Habitat Connectivity Study.csv")
 # Removing columns with no values
@@ -54,6 +56,7 @@ boundary <- st_bbox(ParksSCC %>% filter(park_name %in% c("Calero Co. Pk.", "Coyo
 ParksMap <-tm_shape(ParksSCC, bbox = boundary) + tm_borders(col = "Red",lwd = 3) +tm_basemap(server = "CartoDB.Positron")
 ParksMap
 
+
 #loading county boundary
 CountyBounds <- st_read("County_Boundary__Area_.shp")
 CountyBounds <- st_transform(CountyBounds, crs = 4326)
@@ -68,11 +71,29 @@ LandUseMap <- tm_shape(LandUse, bbox = boundary) + tm_polygons(col = "NATURALCOV
 tmap_options(check.and.fix = TRUE) 
 LandUseMap
 
+#cattable
+TagColumn <- c('5624', '5625', '5627')
+NameColumn <- c('B08M', 'B06M','B07M')
+CatColumn <- c('No Image Available')
+CatTable <- data.frame(TagColumn, NameColumn, CatColumn)
+CatTable %>% 
+  slice(2) %>% 
+  mutate(
+    pic = "FinalProject/B06M.jpg" %>% pander::pandoc.image.return()
+  ) %>% 
+  pander()
+CatTable %>% 
+  slice(3) %>% 
+  mutate(
+    pic = "FinalProject/B07M.jpg" %>% pander::pandoc.image.return()
+  ) %>% 
+  pander()
+CatTable
+
 #loading collective maps
 EnviroMap <- LandUseMap + ParksMap 
 L5624 <- EnviroMap + Lynx5624
 L5625 <- EnviroMap + Lynx5625
 L5627 <- EnviroMap + Lynx5627
 L5619 <- EnviroMap + Lynx5619
-
 
